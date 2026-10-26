@@ -25,7 +25,7 @@ Allergy or food safety concerns     1    4%
 
 ## Why count complaints at every rating
 
-Most teams read the one and two star reviews and skim the rest. In the [2026 Replio case study](https://www.repliohq.com/reports/restaurant-review-complaints-2026) of 2,365 reviews from eight restaurants, 71 of the 333 reviews that named a real problem were rated four or five stars. A "great food, but my order was missing the fries again" review is easy to miss and is often the most useful one.
+Most teams read the one and two star reviews and skim the rest. In the [2026 Replio case study](https://www.repliohq.com/reports/restaurant-review-complaints-2026) of 2,365 reviews from eight restaurants, 71 of the 333 reviews that named a real problem were rated four or five stars. (That study tagged complaints with Replio's own categorizer, not these phrase rules, so this tool will not reproduce its exact numbers.) A "great food, but my order was missing the fries again" review is easy to miss and is often the most useful one.
 
 ## Command line
 
