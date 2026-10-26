@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Replio Complaint Spotter</title>
+  <link rel="stylesheet" href="popup.css">
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+  <header>
+    <img src="../icons/icon-32.png" alt="" width="20" height="20">
+    <span class="brand">Complaint Spotter</span>
+    <span class="by">by Replio</span>
+  </header>
+
+  <main>
+    <p class="intro">Open a restaurant's reviews on Google Maps or Yelp, scroll to load more, then count which complaints repeat. Every star rating counts.</p>
+    <button id="run" class="primary" type="button">Count complaints on this page</button>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section id="results" hidden>
+      <div class="summary">
+        <div><b id="r-total">0</b><span>reviews read</span></div>
+        <div><b id="r-complaints">0</b><span>name a complaint</span></div>
+        <div id="r-high-box"><b id="r-high">0</b><span>of those gave 4 or 5 stars</span></div>
+      </div>
+      <p id="r-small" class="warn" hidden>Small sample. Scroll the reviews to load more, then count again.</p>
+      <table>
+        <caption class="sr-only">Reviews matching each complaint theme</caption>
+        <thead><tr><th scope="col">Theme</th><th scope="col">Reviews</th><th scope="col">Share</th></tr></thead>
+        <tbody id="r-themes"></tbody>
+      </table>
+      <p class="fine">A phrase matcher for English food and drink reviews (<span id="r-method"></span>). Themes overlap, and unmatched does not mean positive. Check the original reviews before acting on a count.</p>
+    </section>
+
+    <details>
+      <summary>Paste reviews instead</summary>
+      <label for="paste" class="sr-only">Reviews, one per line</label>
+      <textarea id="paste" rows="5" placeholder="One review per line"></textarea>
+      <button id="run-paste" type="button">Count pasted reviews</button>
+    </details>
+  </main>
+
+  <footer>
+    <p>In a 2026 Replio case study, about 1 in 5 reviews that named a complaint still gave four or five stars. <a href="https://www.repliohq.com/reports/restaurant-review-complaints-2026" target="_blank" rel="noopener">Read the study</a></p>
+    <p>Want each repeat complaint to get an owner, a due date and a check? <a href="https://www.repliohq.com/product-walkthrough" target="_blank" rel="noopener">See how Replio works</a></p>
+    <p class="fine">Runs in your browser. Reviews are never uploaded or stored.</p>
+  </footer>
+</body>
+</html>
