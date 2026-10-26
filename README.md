@@ -108,3 +108,7 @@ Issues and pull requests are welcome, especially new phrases you see in real rev
 ## Who made this
 
 Built by [Replio](https://www.repliohq.com), which helps restaurant and multi-location teams give each repeat complaint an owner, a due date and a check that it stopped. This tool is free and works without a Replio account.
+
+## License
+
+[MIT](LICENSE). Copyright 2026 Replio.
