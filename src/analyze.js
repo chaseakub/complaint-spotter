@@ -15,6 +15,7 @@ export function analyze(items) {
     reviews.push({ text, rating })
   }
   const counts = new Map(THEMES.map(theme => [theme.id, 0]))
+  const highRatedByTheme = new Map(THEMES.map(theme => [theme.id, 0]))
   let complaintReviews = 0, highRatedComplaints = 0, rated = 0
   for (const review of reviews) {
     const matches = matchedThemes(review.text)
@@ -22,13 +23,16 @@ export function analyze(items) {
     if (!matches.length) continue
     complaintReviews += 1
     if (review.rating !== null && review.rating >= 4) highRatedComplaints += 1
-    for (const theme of matches) counts.set(theme.id, counts.get(theme.id) + 1)
+    for (const theme of matches) {
+      counts.set(theme.id, counts.get(theme.id) + 1)
+      if (review.rating >= 4) highRatedByTheme.set(theme.id, highRatedByTheme.get(theme.id) + 1)
+    }
   }
   const total = reviews.length
   return {
     total, rated, complaintReviews, highRatedComplaints,
     smallSample: total < SMALL_SAMPLE,
-    themes: THEMES.map(({ id, label }) => ({ id, label, count: counts.get(id), share: total ? counts.get(id) / total : 0 }))
+    themes: THEMES.map(({ id, label }) => ({ id, label, count: counts.get(id), highRatedCount: highRatedByTheme.get(id), share: total ? counts.get(id) / total : 0 }))
       .sort((a, b) => b.count - a.count),
     methodVersion: METHOD_VERSION,
   }

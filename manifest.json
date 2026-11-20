@@ -2,10 +2,11 @@
   "manifest_version": 3,
   "name": "Replio Complaint Spotter",
   "short_name": "Complaint Spotter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Count which complaints repeat in the restaurant reviews on your screen, at every star rating. Runs in your browser. Nothing is uploaded.",
   "homepage_url": "https://www.repliohq.com/reports/restaurant-review-complaints-2026",
   "permissions": ["activeTab", "scripting"],
+  "background": { "service_worker": "src/huddle-background.js" },
   "action": {
     "default_title": "Count complaints in these reviews",
     "default_popup": "src/popup.html",

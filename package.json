@@ -1,12 +1,13 @@
 {
   "name": "replio-complaint-spotter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "package": "rm -f replio-complaint-spotter.zip && zip -qr replio-complaint-spotter.zip manifest.json src icons",
-    "example": "node bin/complaint-spotter.mjs examples/sample-reviews.csv"
+    "package": "npm run build && rm -f replio-complaint-spotter.zip && zip -qr replio-complaint-spotter.zip manifest.json index.html downloads src icons LICENSE",
+    "example": "node bin/complaint-spotter.mjs examples/sample-reviews.csv",
+    "build": "node scripts/build-huddle.mjs"
   },
   "description": "Count repeat complaint themes in restaurant reviews: a Chrome extension and a command line tool that share one set of open rules.",
   "bin": {
@@ -16,6 +17,7 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "esbuild": "0.28.1",
     "playwright": "1.58.2"
   },
   "license": "MIT"
