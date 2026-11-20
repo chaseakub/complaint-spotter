@@ -56,6 +56,14 @@ test('extension loads, popup renders and counts pasted reviews', async () => {
   assert.equal(await page.isHidden('#r-high-box'), true)
   assert.match(await page.textContent('#status'), /Read 3 reviews from your paste/)
   await page.screenshot({ path: join(tmpdir(), 'spotter-popup.png'), fullPage: true })
+  const tabOpened = ctx.waitForEvent('page')
+  await page.getByRole('button', {name: 'Make a pre-shift huddle'}).click()
+  const huddlePage = await tabOpened
+  await huddlePage.waitForURL(`chrome-extension://${id}/index.html`)
+  await huddlePage.getByRole('button', {name: 'Edit card'}).waitFor()
+  assert.match(await huddlePage.locator('.rh-evidence').innerText(), /1 of 3 reviews/)
+  assert.equal(await huddlePage.locator('#rh-reviews').inputValue(), '')
+  assert.equal(new URL(huddlePage.url()).search, '')
   assert.deepEqual(errors, [])
   } finally { await ctx.close() }
 })

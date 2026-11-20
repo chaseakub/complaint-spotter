@@ -5,7 +5,16 @@ const $ = id => document.getElementById(id)
 const percent = value => `${Math.round(value * 100)}%`
 const status = text => { $('status').textContent = text }
 
+let currentModel = null
+
+function clearResults() {
+  currentModel = null
+  $('results').hidden = true
+}
+
 function render(result) {
+  currentModel = { total: result.total, themes: result.themes }
+  $('make-huddle').hidden = !result.complaintReviews
   $('results').hidden = false
   $('r-total').textContent = result.total
   $('r-complaints').textContent = result.complaintReviews
@@ -29,7 +38,7 @@ function render(result) {
 function show(items, sourceLabel) {
   const result = analyze(items)
   if (!result.total) {
-    $('results').hidden = true
+    clearResults()
     status('No reviews long enough to count. Open the reviews, scroll to load them, and try again.')
     return
   }
@@ -42,6 +51,7 @@ const SOURCES = { google: 'from Google Maps', yelp: 'from Yelp', selection: 'fro
 async function runOnPage() {
   const button = $('run')
   button.disabled = true
+  clearResults()
   status('Reading the reviews on this page...')
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
@@ -51,13 +61,13 @@ async function runOnPage() {
     await new Promise(resolve => setTimeout(resolve, 500))
     const [{ result }] = await chrome.scripting.executeScript({ target, func: extractReviews })
     if (result.source === 'unsupported') {
-      $('results').hidden = true
+      clearResults()
       status('Open a restaurant\'s reviews on Google Maps or Yelp, or highlight reviews on any page, then try again. You can also paste reviews below.')
       return
     }
     show(result.reviews, SOURCES[result.source])
   } catch {
-    $('results').hidden = true
+    clearResults()
     status('This page cannot be read. Try a Google Maps or Yelp reviews page, or paste reviews below.')
   } finally {
     button.disabled = false
@@ -66,3 +76,17 @@ async function runOnPage() {
 
 $('run').addEventListener('click', runOnPage)
 $('run-paste').addEventListener('click', () => show(parsePasted($('paste').value), 'from your paste'))
+
+$('paste').addEventListener('input', clearResults)
+$('make-huddle').addEventListener('click', async () => {
+  if (!currentModel) return
+  const button = $('make-huddle')
+  button.disabled = true
+  try {
+    if (!await chrome.runtime.sendMessage({type: 'open-huddle', model: currentModel})) throw new Error()
+  } catch {
+    status('The huddle could not open. Try again.')
+  } finally {
+    button.disabled = false
+  }
+})

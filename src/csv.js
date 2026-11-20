@@ -10,7 +10,7 @@ export function csvRows(input) {
   let row = [], field = '', quoted = false, closedQuote = false
   const finishField = () => { row.push(field); field = ''; closedQuote = false }
   const finishRow = () => { finishField(); if (row.some(value => value.trim())) rows.push(row); row = [] }
-  input = String(input).replace(/^﻿/, '').replace(/\r\n?/g, '\n')
+  input = String(input).replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n')
   for (let index = 0; index < input.length; index += 1) {
     const character = input[index]
     if (quoted) {
@@ -46,5 +46,10 @@ export function parseReviewCsv(input) {
   const textAt = column(header, /^(text|review|review_text)$/i, 'review (text, review or review_text)', true)
   const ratingAt = column(header, /^(rating|stars|star_rating)$/i, 'rating (rating, stars or star_rating)', false)
   if (rows.some(row => row.length !== header.length)) invalid('Every CSV row must have the same number of columns as the header.')
-  return rows.map(row => ({ text: row[textAt], rating: ratingAt < 0 ? null : Number.parseInt(row[ratingAt], 10) }))
+  return rows.map(row => {
+    const text = row[textAt]
+    if (ratingAt < 0) return { text, rating: null }
+    const rating = Number(row[ratingAt].trim())
+    return { text, rating: Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : NaN }
+  })
 }

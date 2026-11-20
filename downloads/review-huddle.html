@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Turn a batch of restaurant reviews into an editable card for your next pre-shift huddle. Free and private in your browser.">
+  <title>Review Huddle by Replio</title>
+  <style>
+/* Portable Review Huddle styles. Each selector belongs to the tool. */
+.rh-page, .rh-editor, .rh-print-page {
+  --rh-ink: #211e1c;
+  --rh-muted: #655f5c;
+  --rh-red: #bd0026;
+  --rh-rule: #dcd5d0;
+  --rh-bg: #f7f4f0;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  color: var(--rh-ink);
+}
+.rh-page { margin: 0; background: var(--rh-bg); min-height: 100vh; font-size: 16px; line-height: 1.55; }
+.rh-page *, .rh-editor *, .rh-print-page * { box-sizing: border-box; }
+.rh-page [hidden], .rh-editor [hidden] { display: none !important; }
+.rh-shell { max-width: 760px; margin: 0 auto; padding-inline: clamp(20px,5vw,42px); }
+.rh-top { border-bottom: 1px solid var(--rh-rule); }
+.rh-top-inner, .rh-input-actions, .rh-actions, .rh-rex-actions, .rh-footer, .rh-private, .rh-toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+}
+.rh-top-inner { min-height: 64px; justify-content: space-between; }
+.rh-brand { color: var(--rh-ink); font-size: 23px; font-weight: 750; letter-spacing: -.065em; text-decoration: none; }
+.rh-source, .rh-text { color: var(--rh-red); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.rh-source { font-size: 14px; color: var(--rh-muted); }
+.rh-text { border: 0; background: transparent; padding: 8px 0; cursor: pointer; }
+.rh-main { padding-top: clamp(30px,6vw,64px); padding-bottom: 40px; }
+.rh-intro { margin-bottom: 25px; }
+.rh-intro h1 { margin: 0; color: var(--rh-ink); font-size: clamp(42px,7.5vw,66px); letter-spacing: -.064em; line-height: 1.02; font-weight: 620; }
+.rh-intro p { color: var(--rh-muted); font-size: clamp(16px,2.3vw,19px); letter-spacing: -.014em; line-height: 1.5; margin: 12px 0 0; }
+.rh-input, .rh-paper { border: 1px solid var(--rh-rule); border-radius: 17px; background: white; }
+.rh-input { padding: clamp(18px,4vw,32px); }
+.rh-input label, .rh-field-label { font-size: 18px; font-weight: 650; letter-spacing: -.02em; }
+.rh-field-label { margin: 0; }
+.rh-hint, .rh-private, .rh-footer, .rh-handoff p { color: var(--rh-muted); font-size: 14px; line-height: 1.5; }
+.rh-hint { margin: 4px 0 12px; }
+.rh-input textarea, .rh-editor textarea, .rh-editor input, .rh-theme select {
+  border: 1px solid #b8afa8; border-radius: 8px; padding: 10px 12px; width: 100%; max-width: 100%;
+  font: inherit; font-size: 16px; line-height: 1.45; color: var(--rh-ink); background: white;
+}
+.rh-input textarea, .rh-editor textarea { display: block; resize: vertical; }
+.rh-page :focus-visible, .rh-editor :focus-visible { outline: 2px solid var(--rh-red); outline-offset: 3px; }
+.rh-input-actions { margin-top: 20px; }
+.rh-primary, .rh-secondary {
+  font: inherit; font-size: 15px; line-height: 1.2; font-weight: 650; cursor: pointer;
+  min-height: 44px; padding: 10px 18px; border-radius: 999px;
+}
+.rh-primary { color: white; border: 1px solid var(--rh-red); background: var(--rh-red); }
+.rh-primary:hover { background: #9a0020; }
+.rh-secondary { border: 1px solid #c7bfb9; background: white; color: var(--rh-ink); }
+.rh-secondary:hover { background: #f3efeb; }
+.rh-private { justify-content: space-between; margin-top: 20px; gap: 6px 12px; }
+.rh-private details[open] { width: 100%; }
+.rh-private summary, .rh-handoff summary { cursor: pointer; font-weight: 600; }
+.rh-private details p { margin: 6px 0 0; }
+.rh-input strong { display: block; overflow-wrap: anywhere; }
+.rh-status { font: inherit; font-size: 14px; line-height: 1.45; color: var(--rh-ink); margin: 8px 0; overflow-wrap: anywhere; }
+.rh-input .rh-status { color: var(--rh-red); }
+.rh-status:empty { margin: 0; }
+.rh-footer { border-top: 1px solid var(--rh-rule); margin-top: 24px; padding-top: 10px; gap: 16px; }
+.rh-change { margin-bottom: 6px; font-size: 14px; }
+.rh-editor { font-size: 16px; line-height: 1.5; min-width: 0; }
+.rh-toolbar { justify-content: space-between; margin-bottom: 12px; }
+.rh-toolbar > button:only-child { margin-left: auto; }
+.rh-toolbar .rh-secondary { font-size: 14px; }
+.rh-theme { display: flex; align-items: center; flex-wrap: wrap; gap: 7px 10px; color: var(--rh-muted); max-width: 100%; font-size: 14px; font-weight: 650; }
+.rh-theme select { width: auto; min-height: 44px; padding: 8px; font-size: 15px; }
+.rh-paper { border-top: 4px solid var(--rh-red); padding: clamp(20px,4vw,34px); box-shadow: 0 2px 6px #34251808; overflow-wrap: anywhere; }
+.rh-card-label { font-weight: 700; font-size: 13px; color: var(--rh-red); }
+.rh-card-title { margin: 7px 0 0; padding: 0; font-size: clamp(27px,4vw,38px); line-height: 1.12; font-weight: 650; letter-spacing: -.045em; color: var(--rh-ink); }
+.rh-card-title:focus:not(:focus-visible) { outline: none; }
+.rh-evidence { font-size: 16px; line-height: 1.5; color: var(--rh-muted); margin: 12px 0 0; }
+.rh-point, .rh-card-fields { margin: 20px 0 0; border-top: 1px solid var(--rh-rule); padding-top: 16px; }
+.rh-point h3 { font-size: 15px; font-weight: 700; letter-spacing: -.01em; line-height: 1.4; color: var(--rh-ink); margin: 0 0 5px; }
+.rh-point p { margin: 0; font-size: 17px; line-height: 1.5; white-space: pre-wrap; }
+.rh-card-fields { display: grid; gap: 13px; }
+.rh-edit-field { display: grid; gap: 5px; font-size: 14px; line-height: 1.35; font-weight: 650; }
+.rh-edit-field input, .rh-edit-field textarea { font-weight: 400; }
+.rh-editor .rh-edit-field, .rh-editor .rh-theme { margin: 0; }
+.rh-editor .rh-edit-field textarea { min-height: 0; }
+.rh-actions { margin-top: 16px; }
+.rh-handoff { margin-top: 18px; border-top: 1px solid var(--rh-rule); padding: 12px 0 0; }
+.rh-handoff summary { min-height: 40px; padding-block: 8px; color: var(--rh-ink); font-size: 15px; }
+.rh-handoff p { margin: 2px 0 9px; }
+.rh-rex-actions { gap: 15px; }
+.rh-manual-copy { margin-top: 8px; min-height: 90px; }
+.rh-clipboard { position: fixed; left: -9999px; top: 0; opacity: 0; }
+.rh-print-page { display: none; }
+@media (max-width: 455px) {
+  .rh-main { padding-top: 28px; }
+  .rh-top-inner { min-height: 54px; }
+  .rh-input-actions { align-items: stretch; }
+  .rh-private { align-items: flex-start; flex-direction: column; }
+  .rh-theme { flex: 1 1 100%; }
+  .rh-theme select { flex: 1; min-width: 0; }
+}
+@media print {
+  .rh-page #rh-input, .rh-page .rh-footer, .rh-page .rh-top { display: none !important; }
+  body.rh-printing { margin: 0 !important; background: white !important; }
+  body.rh-printing > :not(.rh-print-page) { display: none !important; }
+  body.rh-printing > .rh-print-page { display: block !important; padding: 4mm; margin: 0; border: 0; box-shadow: none; color: black; }
+  .rh-print-page .rh-point { break-inside: avoid; }
+  .rh-print-page .rh-card-label { color: #262626; }
+}
+
+</style>
+</head>
+<body class="rh-page">
+  <header class="rh-top">
+    <div class="rh-shell rh-top-inner">
+      <a class="rh-brand" href="https://www.repliohq.com/" rel="noreferrer">Replio</a>
+      <a class="rh-source" href="https://github.com/chaseakub/complaint-spotter" rel="noreferrer">Source code <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+  <main class="rh-shell rh-main">
+    <header class="rh-intro">
+      <h1>Review Huddle</h1>
+      <p>Turn guest reviews into one thing your crew can check next shift.</p>
+    </header>
+    <form id="rh-input" class="rh-input">
+      <div id="rh-paste-group">
+        <label for="rh-reviews">Paste your reviews</label>
+        <p id="rh-paste-hint" class="rh-hint">One review per line, from the same location.</p>
+        <textarea id="rh-reviews" rows="5" aria-describedby="rh-paste-hint" spellcheck="false"></textarea>
+      </div>
+      <div id="rh-file-group" hidden>
+        <p class="rh-field-label">Selected file</p>
+        <strong id="rh-file-name"></strong>
+        <button type="button" class="rh-text" id="rh-remove-file">Remove file</button>
+      </div>
+      <p id="rh-input-status" class="rh-status" role="alert"></p>
+      <div class="rh-input-actions">
+        <button type="submit" class="rh-primary">Make a pre-shift huddle</button>
+        <button type="button" class="rh-secondary" id="rh-file-select">Choose CSV file</button>
+        <input type="file" id="rh-file" accept=".csv,text/csv" aria-label="Choose CSV file" hidden>
+      </div>
+      <div class="rh-private">
+        <span>Your reviews stay on this device.</span>
+        <details><summary>CSV format</summary><p>Include a text, review or review_text column. Optionally include a rating, stars or star_rating column with whole numbers from 1 to 5.</p></details>
+      </div>
+    </form>
+    <section id="rh-output" hidden>
+      <button id="rh-change" class="rh-text rh-change" type="button">Change reviews</button>
+      <div id="rh-card-host"></div>
+    </section>
+    <footer class="rh-footer">
+      <button id="rh-copy-link" class="rh-text" type="button">Copy tool link</button>
+      <a id="rh-download" class="rh-text" href="./downloads/review-huddle.html" download="review-huddle.html">Download blank tool</a>
+      <span id="rh-link-status" class="rh-status" role="status"></span>
+    </footer>
+    <noscript>Enable JavaScript to make a huddle. Reviews are processed on this device.</noscript>
+  </main>
+<script>
+/* Review Huddle, from https://github.com/chaseakub/complaint-spotter
+MIT License
+
+Copyright (c) 2026 Replio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+(() => {
+  // src/rules.js
+  var THEMES = [
+    { id: "cold_food", label: "Cold food or hot drinks", phrases: ["the food or drink temperature"], patterns: [
+      /\b(?:cold|lukewarm|tepid)\s+(?:food|fries|meal|pizza|burger|soup|chicken|coffee|tea|dish|dinner|breakfast|lunch)\b/g,
+      /\b(?:food|fries|meal|pizza|burger|soup|chicken|coffee|tea|dish)\b[^.!?;\n]{0,24}\b(?:cold|lukewarm|tepid)\b/g,
+      /\b(?:food|fries|meal|coffee|tea)\b[^.!?;\n]{0,15}\b(?:not hot|wasn't hot|was not hot)\b/g
+    ] },
+    { id: "slow_service", label: "Slow service or long waits", phrases: ["the wait for service"], patterns: [
+      /\b(?:slow|sluggish)\s+(?:service|drive[ -]?thr(?:u|ough)|staff|servers?|checkout)\b/g,
+      /\b(?:service|drive[ -]?thr(?:u|ough)|checkout)\b[^.!?;\n]{0,20}\b(?:slow|sluggish)\b/g,
+      /\b(?:long|lengthy|excessive|ridiculous)\s+(?:wait|queue|line)\b/g,
+      /\b(?:waited|waiting|wait)\s+(?:far\s+)?too long\b/g,
+      /\b(?:waited|waiting)\s+(?:forever|an hour|hours)\b/g
+    ] },
+    { id: "wrong_order", label: "Wrong or missing items", phrases: ["the order accuracy"], patterns: [
+      /\b(?:wrong|incorrect|missing)\s+(?:order|items?|food|drink|sauce|side|fries|burger|sandwich)\b/g,
+      /\b(?:order|items?|drink|sauce|side|fries|burger|sandwich)\b[^.!?;\n]{0,18}\b(?:missing|wrong|incorrect)\b/g,
+      /\b(?:forgot|forgotten|left out)\s+(?:(?:my|our|the|a)\s+)?(?:items?|drink|sauce|side|fries|burger|sandwich)\b/g
+    ] },
+    { id: "staff_conduct", label: "Rude or dismissive service", phrases: ["the way the interaction was handled"], patterns: [
+      /\b(?:rude|dismissive|disrespectful|unfriendly)\s+(?:staff|server|waiter|waitress|cashier|manager|service|employee)\b/g,
+      /\b(?:staff|server|waiter|waitress|cashier|manager|employee)\b[^.!?;\n]{0,20}\b(?:rude|dismissive|disrespectful|unfriendly)\b/g,
+      /\b(?:ignored us|ignored me|yelled at us|yelled at me)\b/g
+    ] },
+    { id: "cleanliness", label: "Cleanliness concerns", phrases: ["the cleanliness concern"], patterns: [
+      /\b(?:dirty|filthy|sticky|unclean)\s+(?:tables?|floor|bathroom|restroom|utensils|cutlery|restaurant|kitchen)\b/g,
+      /\b(?:tables?|floor|bathroom|restroom|utensils|cutlery|restaurant|kitchen)\b[^.!?;\n]{0,18}\b(?:dirty|filthy|sticky|unclean)\b/g,
+      /\b(?:hair in (?:my|the|our) food|roaches|cockroaches)\b/g
+    ] },
+    { id: "allergy_safety", label: "Allergy or food safety concerns", phrases: ["the safety concern"], patterns: [
+      /\b(?:allergic reaction|food poisoning|undercooked chicken|raw chicken)\b/g,
+      /\b(?:allergy|allergies|allergen)\b[^.!?;\n]{0,25}\b(?:ignored|dismissed|unsafe|not taken seriously)\b/g,
+      /\b(?:ignored|dismissed)\s+(?:(?:my|our|the)\s+)?(?:allergy|allergies)\b/g,
+      /\b(?:nuts|peanuts|dairy|gluten)\b[^.!?;\n]{0,18}\bdespite\b[^.!?;\n]{0,18}\ballergy\b/g
+    ] },
+    { id: "delivery", label: "Delivery timing or handling", phrases: ["the delivery experience"], patterns: [
+      /\b(?:late|delayed|spilled|damaged)\s+(?:delivery|delivery order)\b/g,
+      /\bdelivery\b[^.!?;\n]{0,20}\b(?:late|delayed|spilled|damaged|never arrived)\b/g,
+      /\b(?:delivery|driver)\b[^.!?;\n]{0,20}\b(?:wrong address|wrong house)\b/g
+    ] }
+  ];
+  function isNegated(text, match) {
+    const before = text.slice(Math.max(0, match.index - 45), match.index).split(/[.!?;\n]|\bbut\b|\bhowever\b/).at(-1);
+    const value = match[0];
+    if (/\bnot only\s*$/.test(before)) return false;
+    if (/\b(?:no|without)\s+(?:(?:issues?|problems?|complaints?|trouble)\s+(?:with|about)\s+)?(?:any\s+)?$/.test(before)) return true;
+    if (/\b(?:not|never|wasn't|weren't|isn't|aren't)\s+(?:(?:really|very|actually|at all|longer|ever)\s+)*$/.test(before)) return true;
+    if (/\b(?:never|haven't|hadn't|didn't|don't|doesn't)\s+(?:(?:had|have|experience|experienced|encounter|encountered|receive|received|get|got)\s+)?(?:any\s+)?$/.test(before)) return true;
+    return /\b(?:not|never|wasn't|weren't|isn't|aren't)\s+(?:at all\s+)?(?:cold|lukewarm|tepid|slow|sluggish|missing|wrong|incorrect|rude|dismissive|disrespectful|unfriendly|dirty|filthy|sticky|unclean|late|delayed|spilled|damaged)\b/.test(value);
+  }
+  function matchedThemes(review) {
+    const text = review.toLowerCase().replace(/[’‘]/g, "'");
+    return THEMES.filter((theme) => theme.patterns.some((pattern) => [...text.matchAll(pattern)].some((match) => !isNegated(text, match))));
+  }
+  var METHOD_VERSION = "food-drink-rules-1.0";
+
+  // src/analyze.js
+  var SMALL_SAMPLE = 20;
+  var MIN_CHARACTERS = 20;
+  function analyze(items) {
+    const seen = /* @__PURE__ */ new Set();
+    const reviews = [];
+    for (const item of items || []) {
+      const text = String(item?.text || "").replace(/\s+/g, " ").trim();
+      if (text.length < MIN_CHARACTERS || seen.has(text)) continue;
+      seen.add(text);
+      const rating = Number.isInteger(item.rating) && item.rating >= 1 && item.rating <= 5 ? item.rating : null;
+      reviews.push({ text, rating });
+    }
+    const counts = new Map(THEMES.map((theme) => [theme.id, 0]));
+    const highRatedByTheme = new Map(THEMES.map((theme) => [theme.id, 0]));
+    let complaintReviews = 0, highRatedComplaints = 0, rated = 0;
+    for (const review of reviews) {
+      const matches = matchedThemes(review.text);
+      if (review.rating !== null) rated += 1;
+      if (!matches.length) continue;
+      complaintReviews += 1;
+      if (review.rating !== null && review.rating >= 4) highRatedComplaints += 1;
+      for (const theme of matches) {
+        counts.set(theme.id, counts.get(theme.id) + 1);
+        if (review.rating >= 4) highRatedByTheme.set(theme.id, highRatedByTheme.get(theme.id) + 1);
+      }
+    }
+    const total = reviews.length;
+    return {
+      total,
+      rated,
+      complaintReviews,
+      highRatedComplaints,
+      smallSample: total < SMALL_SAMPLE,
+      themes: THEMES.map(({ id, label }) => ({ id, label, count: counts.get(id), highRatedCount: highRatedByTheme.get(id), share: total ? counts.get(id) / total : 0 })).sort((a, b) => b.count - a.count),
+      methodVersion: METHOD_VERSION
+    };
+  }
+  function parsePasted(text) {
+    return String(text || "").split(/\r?\n/).map((line) => ({ text: line, rating: null }));
+  }
+
+  // src/csv.js
+  function invalid(message) {
+    throw new Error(message);
+  }
+  function csvRows(input) {
+    const rows = [];
+    let row = [], field = "", quoted = false, closedQuote = false;
+    const finishField = () => {
+      row.push(field);
+      field = "";
+      closedQuote = false;
+    };
+    const finishRow = () => {
+      finishField();
+      if (row.some((value) => value.trim())) rows.push(row);
+      row = [];
+    };
+    input = String(input).replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n");
+    for (let index = 0; index < input.length; index += 1) {
+      const character = input[index];
+      if (quoted) {
+        if (character === '"') {
+          if (input[index + 1] === '"') {
+            field += '"';
+            index += 1;
+          } else {
+            quoted = false;
+            closedQuote = true;
+          }
+        } else field += character;
+        continue;
+      }
+      if (character === ",") {
+        finishField();
+        continue;
+      }
+      if (character === "\n") {
+        finishRow();
+        continue;
+      }
+      if (closedQuote) invalid("A closing CSV quote must be followed by a comma or a new line.");
+      if (character === '"') {
+        if (field.length) invalid("A CSV quote must begin a field. Escape quotes inside a quoted field by doubling them.");
+        quoted = true;
+      } else field += character;
+    }
+    if (quoted) invalid("The CSV contains an unclosed quoted field.");
+    if (field.length || row.length || closedQuote) finishRow();
+    return rows;
+  }
+  var column = (header, pattern, name, required) => {
+    const found = header.map((value, index) => pattern.test(value.trim()) ? index : -1).filter((index) => index >= 0);
+    if (found.length > 1 || required && !found.length) invalid(`CSV needs exactly one ${name} column.`);
+    return found.length ? found[0] : -1;
+  };
+  function parseReviewCsv(input) {
+    const rows = csvRows(input);
+    const header = rows.shift() || [];
+    const textAt = column(header, /^(text|review|review_text)$/i, "review (text, review or review_text)", true);
+    const ratingAt = column(header, /^(rating|stars|star_rating)$/i, "rating (rating, stars or star_rating)", false);
+    if (rows.some((row) => row.length !== header.length)) invalid("Every CSV row must have the same number of columns as the header.");
+    return rows.map((row) => {
+      const text = row[textAt];
+      if (ratingAt < 0) return { text, rating: null };
+      const rating = Number(row[ratingAt].trim());
+      return { text, rating: Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : NaN };
+    });
+  }
+
+  // src/huddle.js
+  var checks = {
+    wrong_order: {
+      title: "Order accuracy",
+      finding: "wrong or missing items",
+      action: "At pickup, match each bag to the ticket before handing it over. Check sides, sauces and drinks.",
+      followUp: "After the rush, ask the pickup lead what they caught at handoff."
+    },
+    cold_food: {
+      title: "Food temperature",
+      finding: "food or drink temperature",
+      action: "Watch one order from the kitchen to pickup. Check where ready items wait before handoff.",
+      followUp: "After the rush, ask the shift lead where ready orders waited."
+    },
+    slow_service: {
+      title: "Wait times",
+      finding: "slow service or long waits",
+      action: "Follow one order during the rush. Note where the guest waits longest.",
+      followUp: "After the rush, ask the shift lead which step held up the order."
+    },
+    staff_conduct: {
+      title: "Guest interactions",
+      finding: "rude or dismissive service",
+      action: "At the counter, acknowledge waiting guests and give them a clear next step.",
+      followUp: "After service, ask the floor lead what they noticed during a guest interaction."
+    },
+    cleanliness: {
+      title: "Cleanliness",
+      finding: "cleanliness concerns",
+      action: "Walk the guest areas before service. Check the entry, tables and restrooms with the floor lead.",
+      followUp: "Ask the floor lead which area needed attention and who checked it again."
+    },
+    delivery: {
+      title: "Delivery handoff",
+      finding: "delivery timing or handling",
+      action: "Walk one delivery order from packing to pickup. Check the label, staging spot and handoff.",
+      followUp: "After the rush, ask the packing lead what happened at pickup."
+    },
+    allergy_safety: {
+      title: "Food safety concerns",
+      finding: "allergy or food safety concerns",
+      action: "Bring the concern to the manager on duty immediately and follow the restaurant’s established safety procedure.",
+      followUp: "Have the manager on duty confirm the required steps and record the follow-up."
+    }
+  };
+  function huddleThemes(model) {
+    if (!Number.isSafeInteger(model?.total) || model.total < 1 || !Array.isArray(model.themes)) return [];
+    return model.themes.filter((theme) => theme && Object.hasOwn(checks, theme.id) && Number.isSafeInteger(theme.count) && theme.count > 0 && theme.count <= model.total).sort((a, b) => b.count - a.count);
+  }
+  function makeHuddle(model, themeId) {
+    const theme = huddleThemes(model).find((item) => item.id === themeId);
+    if (!theme) return null;
+    const { title, finding, action, followUp } = checks[theme.id];
+    const unit = model.total === 1 ? "review" : "reviews";
+    const verb = theme.count === 1 ? "mentions" : "mention";
+    let evidence = `${theme.count} of ${model.total} ${unit} in this batch ${verb} ${finding}.`;
+    if (Number.isSafeInteger(theme.highRatedCount) && theme.highRatedCount > 0 && theme.highRatedCount <= theme.count) {
+      const ratingVerb = theme.highRatedCount === 1 ? "was" : "were";
+      evidence += ` ${theme.highRatedCount} ${ratingVerb} rated 4 or 5 stars.`;
+    }
+    return { title, evidence, action, followUp, recognition: "" };
+  }
+  function formatHuddle(card) {
+    return [
+      card.title,
+      card.evidence,
+      card.action?.trim() && `Today's check
+${card.action.trim()}`,
+      card.followUp?.trim() && `Follow-up
+${card.followUp.trim()}`,
+      card.recognition?.trim() && `Recognition
+${card.recognition.trim()}`
+    ].filter((value) => value?.trim()).map((value) => value.trim()).join("\n\n");
+  }
+
+  // src/huddle-editor.js
+  function element(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  }
+  function button(text, className, onClick) {
+    const node = element("button", className, text);
+    node.type = "button";
+    node.addEventListener("click", onClick);
+    return node;
+  }
+  async function copyHuddleText(text) {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {
+    }
+    const previousFocus = document.activeElement;
+    const input = element("textarea", "rh-clipboard");
+    input.value = text;
+    input.readOnly = true;
+    document.body.append(input);
+    input.select();
+    try {
+      return Boolean(document.execCommand("copy"));
+    } catch {
+      return false;
+    } finally {
+      input.remove();
+      previousFocus?.focus?.({ preventScroll: true });
+    }
+  }
+  var fields = [
+    { key: "title", label: "Card title", tag: "input" },
+    { key: "action", label: "What to check", tag: "textarea" },
+    { key: "followUp", label: "Who will follow up and when?", tag: "textarea" },
+    { key: "recognition", label: "Team shout-out (optional)", tag: "input" }
+  ];
+  function paper(card, editing = false) {
+    const sheet = element("article", "rh-paper");
+    const heading = element("h2", "rh-card-title", card.title.trim() || "Pre-shift huddle");
+    const stripe = element("div", "rh-card-label", "Pre-shift huddle");
+    heading.tabIndex = -1;
+    heading.dataset.huddleHeading = "";
+    sheet.append(stripe, heading, element("p", "rh-evidence", card.evidence));
+    if (editing) {
+      const editFields = element("div", "rh-card-fields");
+      for (const field of fields) {
+        const label = element("label", "rh-edit-field");
+        const control = element(field.tag);
+        if (field.tag === "textarea") control.rows = 2;
+        else control.type = "text";
+        control.value = card[field.key] || "";
+        control.addEventListener("input", () => {
+          card[field.key] = control.value;
+          if (field.key === "title") heading.textContent = control.value.trim() || "Pre-shift huddle";
+        });
+        label.append(element("span", "", field.label), control);
+        editFields.append(label);
+      }
+      sheet.append(editFields);
+    } else {
+      for (const [key, label] of [["action", "What to check"], ["followUp", "Follow-up"], ["recognition", "Team shout-out"]]) {
+        const text = (card[key] || "").trim();
+        if (!text) continue;
+        const section = element("section", "rh-point");
+        section.append(element("h3", "", label), element("p", "", text));
+        sheet.append(section);
+      }
+    }
+    return sheet;
+  }
+  var activeEditors = /* @__PURE__ */ new WeakMap();
+  function mountHuddleEditor(container, model) {
+    activeEditors.get(container)?.();
+    const root = element("section", "rh-editor");
+    root.setAttribute("aria-label", "Review huddle card");
+    container.replaceChildren(root);
+    const themes = huddleThemes(model);
+    if (!themes.length) {
+      root.textContent = "No complaint themes matched this batch.";
+      return () => root.remove();
+    }
+    const drafts = /* @__PURE__ */ new Map();
+    let themeId = themes[0].id;
+    let editing = false;
+    let printSheet = null;
+    const current = () => {
+      if (!drafts.has(themeId)) drafts.set(themeId, makeHuddle(model, themeId));
+      return drafts.get(themeId);
+    };
+    const status2 = element("p", "rh-status");
+    status2.setAttribute("role", "status");
+    const manualCopy = element("textarea", "rh-manual-copy");
+    manualCopy.readOnly = true;
+    manualCopy.setAttribute("aria-label", "Text to copy");
+    manualCopy.hidden = true;
+    const clearFeedback = () => {
+      status2.textContent = "";
+      manualCopy.hidden = true;
+      manualCopy.value = "";
+    };
+    const copy = async (text, success) => {
+      clearFeedback();
+      if (await copyHuddleText(text)) {
+        status2.textContent = success;
+      } else {
+        status2.textContent = "Select and copy the text below.";
+        manualCopy.value = text;
+        manualCopy.hidden = false;
+        manualCopy.focus();
+        manualCopy.select();
+      }
+    };
+    function clearPrint() {
+      if (!printSheet) return;
+      printSheet.remove();
+      document.body.classList.remove("rh-printing");
+      printSheet = null;
+    }
+    function preparePrint() {
+      if (!root.isConnected || root.closest("[hidden]") || printSheet) return;
+      printSheet = paper(current());
+      printSheet.classList.add("rh-print-page");
+      document.body.append(printSheet);
+      document.body.classList.add("rh-printing");
+    }
+    const toolbar = element("div", "rh-toolbar");
+    if (themes.length > 1) {
+      const label = element("label", "rh-theme");
+      label.append(element("span", "", "Huddle focus"));
+      const select = element("select");
+      for (const theme of themes) {
+        const option = element("option", "", theme.label);
+        option.value = theme.id;
+        select.append(option);
+      }
+      select.addEventListener("change", () => {
+        themeId = select.value;
+        editing = false;
+        redraw();
+      });
+      label.append(select);
+      toolbar.append(label);
+    }
+    const editorBody = element("div");
+    const edit = button("Edit card", "rh-secondary", () => {
+      editing = !editing;
+      redraw();
+      if (editing) editorBody.querySelector("input").focus();
+    });
+    function redraw() {
+      edit.textContent = editing ? "Done editing" : "Edit card";
+      edit.setAttribute("aria-pressed", String(editing));
+      editorBody.replaceChildren(paper(current(), editing));
+      clearFeedback();
+    }
+    toolbar.append(edit);
+    const actions = element("div", "rh-actions");
+    actions.append(
+      button("Copy huddle", "rh-primary", () => copy(formatHuddle(current()), "Huddle copied.")),
+      button("Print card", "rh-secondary", () => {
+        preparePrint();
+        window.print();
+      })
+    );
+    const handoff = element("details", "rh-handoff");
+    handoff.append(element("summary", "", "Have Rex follow up"));
+    const instructions = element("p", "", "Paste the request in Rex to choose an owner and confirm.");
+    const rexActions = element("div", "rh-rex-actions");
+    const openRex = element("a", "rh-text", "Open Rex ↗");
+    openRex.href = "https://app.repliohq.com/?page=rex#/rex";
+    openRex.target = "_blank";
+    openRex.rel = "noopener noreferrer";
+    rexActions.append(button("Copy request", "rh-secondary", () => {
+      const prompt = "Help me assign this shift check and follow up. Confirm the owner and timing with me.\n\n" + formatHuddle(current());
+      copy(prompt, "Request copied. Open Rex and paste it into the conversation.");
+    }), openRex);
+    handoff.append(instructions, rexActions);
+    root.append(toolbar, editorBody, actions, status2, manualCopy, handoff);
+    window.addEventListener("beforeprint", preparePrint);
+    window.addEventListener("afterprint", clearPrint);
+    const cleanup = () => {
+      window.removeEventListener("beforeprint", preparePrint);
+      window.removeEventListener("afterprint", clearPrint);
+      clearPrint();
+      root.remove();
+      activeEditors.delete(container);
+    };
+    activeEditors.set(container, cleanup);
+    redraw();
+    return cleanup;
+  }
+
+  // src/huddle-page.js
+  var byId = (id) => document.getElementById(id);
+  var reviewForm = byId("rh-input");
+  var paste = byId("rh-reviews");
+  var fileInput = byId("rh-file");
+  var output = byId("rh-output");
+  var status = byId("rh-input-status");
+  var maxBytes = 300 * 1024;
+  var maxRows = 200;
+  var selectedFile = null;
+  var clearEditor = () => {
+  };
+  var revision = 0;
+  function setFile(file) {
+    revision++;
+    selectedFile = file;
+    byId("rh-file-name").textContent = file?.name || "";
+    byId("rh-file-group").hidden = !file;
+    byId("rh-paste-group").hidden = !!file;
+    byId("rh-file-select").textContent = file ? "Choose another CSV" : "Choose CSV file";
+    status.textContent = "";
+    if (!file) fileInput.value = "";
+  }
+  function startHuddleFromModel(model) {
+    clearEditor();
+    reviewForm.hidden = true;
+    output.hidden = false;
+    clearEditor = mountHuddleEditor(byId("rh-card-host"), model);
+    const heading = output.querySelector("[data-huddle-heading]");
+    heading?.focus();
+  }
+  byId("rh-file-select").addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", () => {
+    if (fileInput.files[0]) setFile(fileInput.files[0]);
+  });
+  byId("rh-remove-file").addEventListener("click", () => {
+    setFile(null);
+    paste.focus();
+  });
+  paste.addEventListener("input", () => {
+    revision++;
+    status.textContent = "";
+  });
+  reviewForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const ticket = ++revision;
+    status.textContent = "";
+    try {
+      const file = selectedFile;
+      if ((file ? file.size : new Blob([paste.value]).size) > maxBytes) {
+        throw new Error("Use a batch smaller than 300 KiB.");
+      }
+      if (!file && !paste.value.trim()) {
+        paste.focus();
+        throw new Error("Paste a review or choose a CSV file to begin.");
+      }
+      const items = file ? parseReviewCsv(await file.text()) : parsePasted(paste.value).filter((item) => item.text.trim());
+      if (ticket !== revision) return;
+      if (items.length > maxRows) throw new Error("Use up to 200 reviews from one location at a time.");
+      const model = analyze(items);
+      if (!model.total) throw new Error("Include a review with at least 20 characters so there is enough text to check.");
+      if (!model.themes.some((theme) => theme.count > 0)) {
+        throw new Error("No complaint themes matched this batch. Try other reviews from the same location.");
+      }
+      startHuddleFromModel(model);
+    } catch (error) {
+      if (ticket === revision) status.textContent = error.message || "The reviews could not be read.";
+    }
+  });
+  byId("rh-change").addEventListener("click", () => {
+    revision++;
+    clearEditor();
+    output.hidden = true;
+    reviewForm.hidden = false;
+    status.textContent = "";
+    if (selectedFile) byId("rh-file-select").focus();
+    else paste.focus();
+  });
+  var cleanUrl = new URL(location.href);
+  cleanUrl.search = "";
+  cleanUrl.hash = "";
+  var linkButton = byId("rh-copy-link");
+  if (location.protocol === "file:") {
+    linkButton.hidden = true;
+    byId("rh-download").hidden = true;
+    byId("rh-link-status").textContent = "Share this HTML file to give someone a blank tool.";
+  } else if (location.protocol === "chrome-extension:") {
+    linkButton.hidden = true;
+  } else {
+    if (/^\/tools\/review-huddle(?:\.html|\/)?$/.test(cleanUrl.pathname)) cleanUrl.pathname = "/tools/review-huddle";
+    linkButton.addEventListener("click", async () => {
+      const copied = await copyHuddleText(cleanUrl.href);
+      byId("rh-link-status").textContent = copied ? "Tool link copied." : cleanUrl.href;
+    });
+  }
+  if (window.location.protocol === "chrome-extension:" && globalThis.chrome?.runtime?.sendMessage) {
+    globalThis.chrome.runtime.sendMessage({ type: "take-huddle" }).then((model) => {
+      if (model) startHuddleFromModel(model);
+    }).catch(() => {
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

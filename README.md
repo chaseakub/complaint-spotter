@@ -23,6 +23,14 @@ Delivery timing or handling         2    8%
 Allergy or food safety concerns     1    4%
 ```
 
+## Make a pre-shift huddle
+
+After counting reviews in the extension, choose **Make a pre-shift huddle**. Pick a topic, edit the shift check and follow-up, then copy the card into your team chat or print it. The editor receives only aggregate counts. You can also start in the standalone browser tool by pasting reviews or importing a CSV. A **Have Rex follow up** option lets you copy a request into your own Rex conversation and confirm who should own it.
+
+For an offline copy, choose **Download blank tool** on the website or in the extension. On GitHub, open [review-huddle.html](downloads/review-huddle.html) and choose **Download raw file**. Open the file in your browser or share it with another manager. It starts blank each time. Reviews and edits stay in memory for the current session. To build your own copy, run `npm ci` and `npm run build`.
+
+To host it yourself, serve this repository with a static HTTP server and open `index.html`. The build also produces a version for the Replio website under `dist/web/`.
+
 ## Why count complaints at every rating
 
 Most teams read the one and two star reviews and skim the rest. In the [2026 Replio case study](https://www.repliohq.com/reports/restaurant-review-complaints-2026) of 2,365 reviews from eight restaurants, 71 of the 333 reviews that named a real problem were rated four or five stars. (That study tagged complaints with Replio's own categorizer, not these phrase rules, so this tool will not reproduce its exact numbers.) A "great food, but my order was missing the fries again" review is easy to miss and is often the most useful one.

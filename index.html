@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Turn a batch of restaurant reviews into an editable card for your next pre-shift huddle. Free and private in your browser.">
+  <title>Review Huddle by Replio</title>
+  <link rel="stylesheet" href="./src/huddle-editor.css">
+  <script type="module" src="./src/huddle-page.js"></script>
+</head>
+<body class="rh-page">
+  <header class="rh-top">
+    <div class="rh-shell rh-top-inner">
+      <a class="rh-brand" href="https://www.repliohq.com/" rel="noreferrer">Replio</a>
+      <a class="rh-source" href="https://github.com/chaseakub/complaint-spotter" rel="noreferrer">Source code <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+  <main class="rh-shell rh-main">
+    <header class="rh-intro">
+      <h1>Review Huddle</h1>
+      <p>Turn guest reviews into one thing your crew can check next shift.</p>
+    </header>
+    <form id="rh-input" class="rh-input">
+      <div id="rh-paste-group">
+        <label for="rh-reviews">Paste your reviews</label>
+        <p id="rh-paste-hint" class="rh-hint">One review per line, from the same location.</p>
+        <textarea id="rh-reviews" rows="5" aria-describedby="rh-paste-hint" spellcheck="false"></textarea>
+      </div>
+      <div id="rh-file-group" hidden>
+        <p class="rh-field-label">Selected file</p>
+        <strong id="rh-file-name"></strong>
+        <button type="button" class="rh-text" id="rh-remove-file">Remove file</button>
+      </div>
+      <p id="rh-input-status" class="rh-status" role="alert"></p>
+      <div class="rh-input-actions">
+        <button type="submit" class="rh-primary">Make a pre-shift huddle</button>
+        <button type="button" class="rh-secondary" id="rh-file-select">Choose CSV file</button>
+        <input type="file" id="rh-file" accept=".csv,text/csv" aria-label="Choose CSV file" hidden>
+      </div>
+      <div class="rh-private">
+        <span>Your reviews stay on this device.</span>
+        <details><summary>CSV format</summary><p>Include a text, review or review_text column. Optionally include a rating, stars or star_rating column with whole numbers from 1 to 5.</p></details>
+      </div>
+    </form>
+    <section id="rh-output" hidden>
+      <button id="rh-change" class="rh-text rh-change" type="button">Change reviews</button>
+      <div id="rh-card-host"></div>
+    </section>
+    <footer class="rh-footer">
+      <button id="rh-copy-link" class="rh-text" type="button">Copy tool link</button>
+      <a id="rh-download" class="rh-text" href="./downloads/review-huddle.html" download="review-huddle.html">Download blank tool</a>
+      <span id="rh-link-status" class="rh-status" role="status"></span>
+    </footer>
+    <noscript>Enable JavaScript to make a huddle. Reviews are processed on this device.</noscript>
+  </main>
+</body>
+</html>
