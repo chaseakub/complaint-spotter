@@ -21,7 +21,7 @@
 .rh-page [hidden], .rh-editor [hidden] { display: none !important; }
 .rh-shell { max-width: 760px; margin: 0 auto; padding-inline: clamp(20px,5vw,42px); }
 .rh-top { border-bottom: 1px solid var(--rh-rule); }
-.rh-top-inner, .rh-input-actions, .rh-actions, .rh-rex-actions, .rh-footer, .rh-private, .rh-toolbar {
+.rh-top-inner, .rh-input-actions, .rh-actions, .rh-footer, .rh-private, .rh-toolbar {
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
 }
 .rh-top-inner { min-height: 64px; justify-content: space-between; }
@@ -56,7 +56,7 @@
 .rh-secondary:hover { background: #f3efeb; }
 .rh-private { justify-content: space-between; margin-top: 20px; gap: 6px 12px; }
 .rh-private details[open] { width: 100%; }
-.rh-private summary, .rh-handoff summary { cursor: pointer; font-weight: 600; }
+.rh-private summary { cursor: pointer; font-weight: 600; }
 .rh-private details p { margin: 6px 0 0; }
 .rh-input strong { display: block; overflow-wrap: anywhere; }
 .rh-status { font: inherit; font-size: 14px; line-height: 1.45; color: var(--rh-ink); margin: 8px 0; overflow-wrap: anywhere; }
@@ -85,9 +85,7 @@
 .rh-editor .rh-edit-field textarea { min-height: 0; }
 .rh-actions { margin-top: 16px; }
 .rh-handoff { margin-top: 18px; border-top: 1px solid var(--rh-rule); padding: 12px 0 0; }
-.rh-handoff summary { min-height: 40px; padding-block: 8px; color: var(--rh-ink); font-size: 15px; }
-.rh-handoff p { margin: 2px 0 9px; }
-.rh-rex-actions { gap: 15px; }
+.rh-handoff p { margin: 6px 0 0; }
 .rh-manual-copy { margin-top: 8px; min-height: 90px; }
 .rh-clipboard { position: fixed; left: -9999px; top: 0; opacity: 0; }
 .rh-print-page { display: none; }
@@ -421,6 +419,29 @@ ${card.followUp.trim()}`,
 ${card.recognition.trim()}`
     ].filter((value) => value?.trim()).map((value) => value.trim()).join("\n\n");
   }
+  function rexHuddleUrl(card, themeId) {
+    if (!Object.hasOwn(checks, themeId)) throw new Error("Choose a huddle focus first.");
+    const fields2 = [
+      ["title", "Card title", 160],
+      ["evidence", "Review count", 650],
+      ["action", "What to check", 1200],
+      ["followUp", "Follow-up", 1e3],
+      ["recognition", "Team shout-out", 450]
+    ];
+    const draft = { v: 1, themeId };
+    for (const [key, label, limit] of fields2) {
+      const value = (card[key] || "").trim();
+      if (value.length > limit) throw new Error(`Edit the card to keep “${label}” under ${limit + 1} characters.`);
+      draft[key] = value;
+    }
+    draft.title || (draft.title = "Pre-shift huddle");
+    if (!draft.action) throw new Error("Edit the card and add what the team should check.");
+    if (!draft.evidence) throw new Error("Choose a focus with matching reviews first.");
+    const bytes = new TextEncoder().encode(JSON.stringify(draft));
+    if (bytes.length > 8192) throw new Error("Shorten the card before opening it in Rex.");
+    const encoded = btoa(String.fromCharCode(...bytes)).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+    return "https://app.repliohq.com/?page=rex#/rex/review-huddle?card=" + encoded;
+  }
 
   // src/huddle-editor.js
   function element(tag, className, text) {
@@ -592,19 +613,15 @@ ${card.recognition.trim()}`
         window.print();
       })
     );
-    const handoff = element("details", "rh-handoff");
-    handoff.append(element("summary", "", "Have Rex follow up"));
-    const instructions = element("p", "", "Paste the request in Rex to choose an owner and confirm.");
-    const rexActions = element("div", "rh-rex-actions");
-    const openRex = element("a", "rh-text", "Open Rex ↗");
-    openRex.href = "https://app.repliohq.com/?page=rex#/rex";
-    openRex.target = "_blank";
-    openRex.rel = "noopener noreferrer";
-    rexActions.append(button("Copy request", "rh-secondary", () => {
-      const prompt = "Help me assign this shift check and follow up. Confirm the owner and timing with me.\n\n" + formatHuddle(current());
-      copy(prompt, "Request copied. Open Rex and paste it into the conversation.");
-    }), openRex);
-    handoff.append(instructions, rexActions);
+    const handoff = element("div", "rh-handoff");
+    handoff.append(button("Have Rex follow up", "rh-secondary", () => {
+      clearFeedback();
+      try {
+        window.location.assign(rexHuddleUrl(current(), themeId));
+      } catch (error) {
+        status2.textContent = error.message || "Rex could not open. Try again.";
+      }
+    }), element("p", "", "Choose an owner and a check-back time in Rex."));
     root.append(toolbar, editorBody, actions, status2, manualCopy, handoff);
     window.addEventListener("beforeprint", preparePrint);
     window.addEventListener("afterprint", clearPrint);

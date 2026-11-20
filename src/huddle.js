@@ -74,3 +74,26 @@ export function formatHuddle(card) {
     card.recognition?.trim() && `Recognition\n${card.recognition.trim()}`,
   ].filter(value => value?.trim()).map(value => value.trim()).join('\n\n')
 }
+
+// Only the displayed card crosses into Rex. Browser fragments stay out of HTTP requests.
+export function rexHuddleUrl(card, themeId) {
+  if (!Object.hasOwn(checks, themeId)) throw new Error('Choose a huddle focus first.')
+  const fields = [
+    ['title', 'Card title', 160], ['evidence', 'Review count', 650],
+    ['action', 'What to check', 1200], ['followUp', 'Follow-up', 1000],
+    ['recognition', 'Team shout-out', 450],
+  ]
+  const draft = { v: 1, themeId }
+  for (const [key, label, limit] of fields) {
+    const value = (card[key] || '').trim()
+    if (value.length > limit) throw new Error(`Edit the card to keep “${label}” under ${limit + 1} characters.`)
+    draft[key] = value
+  }
+  draft.title ||= 'Pre-shift huddle'
+  if (!draft.action) throw new Error('Edit the card and add what the team should check.')
+  if (!draft.evidence) throw new Error('Choose a focus with matching reviews first.')
+  const bytes = new TextEncoder().encode(JSON.stringify(draft))
+  if (bytes.length > 8192) throw new Error('Shorten the card before opening it in Rex.')
+  const encoded = btoa(String.fromCharCode(...bytes)).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '')
+  return 'https://app.repliohq.com/?page=rex#/rex/review-huddle?card=' + encoded
+}
