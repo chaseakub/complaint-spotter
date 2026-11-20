@@ -150,7 +150,7 @@
     </section>
     <footer class="rh-footer">
       <button id="rh-copy-link" class="rh-text" type="button">Copy tool link</button>
-      <a id="rh-download" class="rh-text" download="review-huddle.html" hidden>Download blank tool</a>
+      <a id="rh-download" class="rh-text" href="./downloads/review-huddle.html" download="review-huddle.html">Download blank tool</a>
       <span id="rh-link-status" class="rh-status" role="status"></span>
     </footer>
     <noscript>Enable JavaScript to make a huddle. Reviews are processed on this device.</noscript>
@@ -702,11 +702,12 @@ ${card.recognition.trim()}`
   cleanUrl.search = "";
   cleanUrl.hash = "";
   var linkButton = byId("rh-copy-link");
-  if (location.protocol === "file:" || location.protocol === "chrome-extension:") {
+  if (location.protocol === "file:") {
     linkButton.hidden = true;
-    const download = byId("rh-download");
-    download.href = location.protocol === "file:" ? cleanUrl.href : globalThis.chrome.runtime.getURL("downloads/review-huddle.html");
-    download.hidden = false;
+    byId("rh-download").hidden = true;
+    byId("rh-link-status").textContent = "Share this HTML file to give someone a blank tool.";
+  } else if (location.protocol === "chrome-extension:") {
+    linkButton.hidden = true;
   } else {
     if (/^\/tools\/review-huddle(?:\.html|\/)?$/.test(cleanUrl.pathname)) cleanUrl.pathname = "/tools/review-huddle";
     linkButton.addEventListener("click", async () => {

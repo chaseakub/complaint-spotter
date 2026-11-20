@@ -19,6 +19,7 @@ for (const name of modules) {
   await writeFile(resolve(assets, name), notice + source)
 }
 const hosted = html.replaceAll('./src/', publicPath)
+  .replace('href="./downloads/review-huddle.html"', 'href="/downloads/review-huddle.standalone"')
   .replace('<body class="rh-page">', '<body class="rh-page" data-asset="tools-review-huddle">')
   .replace('</head>', '<script src="/js/consent.js" defer></script>\n  <script type="module" src="/js/page-analytics.js"></script>\n</head>')
   .replace('<footer class="rh-footer">', '<footer class="rh-footer">\n      <a class="rh-text" href="/contact">Contact Replio</a>')
@@ -36,4 +37,6 @@ const offline = html
 await writeFile(resolve(dest, 'review-huddle.html'), offline)
 await mkdir(resolve(root, 'downloads'), {recursive: true})
 await writeFile(resolve(root, 'downloads/review-huddle.html'), offline)
+await mkdir(resolve(web, 'downloads'), {recursive: true})
+await writeFile(resolve(web, 'downloads/review-huddle.standalone'), offline)
 console.log('Built dist/review-huddle.html and the hosted files in dist/web/')

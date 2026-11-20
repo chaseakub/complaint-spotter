@@ -85,11 +85,12 @@ const cleanUrl = new URL(location.href)
 cleanUrl.search = ''
 cleanUrl.hash = ''
 const linkButton = byId('rh-copy-link')
-if (location.protocol === 'file:' || location.protocol === 'chrome-extension:') {
+if (location.protocol === 'file:') {
   linkButton.hidden = true
-  const download = byId('rh-download')
-  download.href = location.protocol === 'file:' ? cleanUrl.href : globalThis.chrome.runtime.getURL('downloads/review-huddle.html')
-  download.hidden = false
+  byId('rh-download').hidden = true
+  byId('rh-link-status').textContent = 'Share this HTML file to give someone a blank tool.'
+} else if (location.protocol === 'chrome-extension:') {
+  linkButton.hidden = true
 } else {
   if (/^\/tools\/review-huddle(?:\.html|\/)?$/.test(cleanUrl.pathname)) cleanUrl.pathname = '/tools/review-huddle'
   linkButton.addEventListener('click', async () => {

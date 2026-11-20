@@ -27,7 +27,7 @@ Allergy or food safety concerns     1    4%
 
 After counting reviews in the extension, choose **Make a pre-shift huddle**. Pick a topic, edit the shift check and follow-up, then copy the card into your team chat or print it. The editor receives only aggregate counts. You can also start in the standalone browser tool by pasting reviews or importing a CSV. A **Have Rex follow up** option lets you copy a request into your own Rex conversation and confirm who should own it.
 
-For an offline copy, open [review-huddle.html](downloads/review-huddle.html) on GitHub, choose **Download raw file**, and open the downloaded file in your browser. You can also build it with `npm ci` and `npm run build`. **Download blank tool** saves a fresh copy you can send to another manager. Reviews and edits stay in memory for the current session.
+For an offline copy, choose **Download blank tool** on the website or in the extension. On GitHub, open [review-huddle.html](downloads/review-huddle.html) and choose **Download raw file**. Open the file in your browser or share it with another manager. It starts blank each time. Reviews and edits stay in memory for the current session. To build your own copy, run `npm ci` and `npm run build`.
 
 To host it yourself, serve this repository with a static HTTP server and open `index.html`. The build also produces a version for the Replio website under `dist/web/`.
 
