@@ -25,7 +25,7 @@ Allergy or food safety concerns     1    4%
 
 ## Make a pre-shift huddle
 
-After counting reviews in the extension, choose **Make a pre-shift huddle**. Pick a topic, edit the shift check and follow-up, then copy the card into your team chat or print it. The editor receives only aggregate counts. You can also start in the standalone browser tool by pasting reviews or importing a CSV. A **Have Rex follow up** option lets you copy a request into your own Rex conversation and confirm who should own it.
+After counting reviews in the extension, choose **Make a pre-shift huddle**. Pick a topic, edit the shift check and follow-up, then copy the card into your team chat or print it. The editor receives only aggregate counts. You can also start in the standalone browser tool by pasting reviews or importing a CSV. Choose **Have Rex follow up** to open the edited card in Rex. Pick the person who owns it and when Rex should check back, then confirm. Only the card and its topic travel with you. Your original reviews stay in the tool.
 
 For an offline copy, choose **Download blank tool** on the website or in the extension. On GitHub, open [review-huddle.html](downloads/review-huddle.html) and choose **Download raw file**. Open the file in your browser or share it with another manager. It starts blank each time. Reviews and edits stay in memory for the current session. To build your own copy, run `npm ci` and `npm run build`.
 

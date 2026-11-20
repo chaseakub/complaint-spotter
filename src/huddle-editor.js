@@ -1,4 +1,4 @@
-import { huddleThemes, makeHuddle, formatHuddle } from './huddle.js'
+import { huddleThemes, makeHuddle, formatHuddle, rexHuddleUrl } from './huddle.js'
 
 function element(tag, className, text) {
   const node = document.createElement(tag)
@@ -173,19 +173,15 @@ export function mountHuddleEditor(container, model) {
       window.print()
     })
   )
-  const handoff = element('details', 'rh-handoff')
-  handoff.append(element('summary', '', 'Have Rex follow up'))
-  const instructions = element('p', '', 'Paste the request in Rex to choose an owner and confirm.')
-  const rexActions = element('div', 'rh-rex-actions')
-  const openRex = element('a', 'rh-text', 'Open Rex ↗')
-  openRex.href = 'https://app.repliohq.com/?page=rex#/rex'
-  openRex.target = '_blank'
-  openRex.rel = 'noopener noreferrer'
-  rexActions.append(button('Copy request', 'rh-secondary', () => {
-    const prompt = 'Help me assign this shift check and follow up. Confirm the owner and timing with me.\n\n' + formatHuddle(current())
-    copy(prompt, 'Request copied. Open Rex and paste it into the conversation.')
-  }), openRex)
-  handoff.append(instructions, rexActions)
+  const handoff = element('div', 'rh-handoff')
+  handoff.append(button('Have Rex follow up', 'rh-secondary', () => {
+    clearFeedback()
+    try {
+      window.location.assign(rexHuddleUrl(current(), themeId))
+    } catch (error) {
+      status.textContent = error.message || 'Rex could not open. Try again.'
+    }
+  }), element('p', '', 'Choose an owner and a check-back time in Rex.'))
   root.append(toolbar, editorBody, actions, status, manualCopy, handoff)
   window.addEventListener('beforeprint', preparePrint)
   window.addEventListener('afterprint', clearPrint)
